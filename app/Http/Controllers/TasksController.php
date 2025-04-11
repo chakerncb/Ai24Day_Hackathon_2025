@@ -30,7 +30,7 @@ class TasksController extends Controller
 
         return response()->json([
             'task' => $task,
-        ]);
+        ])->setStatusCode(200, 'Task found');
     }
 
     public function store(Request $request)
@@ -68,6 +68,22 @@ class TasksController extends Controller
 
         return response()->json([
             'message' => 'Task updated successfully',
+        ]);
+    }
+
+    public function destroy($id){
+        $task = Task::find($id);
+
+        if (!$task) {
+            return response()->json([
+                'message' => 'Task not found',
+            ], 404);
+        }
+
+        $task->delete();
+
+        return response()->json([
+            'message' => 'Task deleted successfully',
         ]);
     }
 
