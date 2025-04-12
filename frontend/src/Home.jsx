@@ -7,7 +7,7 @@ const Home = () => {
   const [items, setItems] = useState([]);
   const [fetcherr, setfetcherror] = useState(null);
   const [loading, setLoading] = useState(true);
-  const API_URL = "http://localhost:8000/api/tasks";
+  const API_URL = "/api/tasks";
 
   useEffect(() => {
     const fetchDAta = async () => {

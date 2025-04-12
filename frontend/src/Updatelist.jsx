@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
-const API_URL = "http://localhost:8000/api/tasks";
+const API_URL = "/api/tasks";
 
 const UpdateList = () => {
   const { id } = useParams(); // Correctly extract `id` from useParams

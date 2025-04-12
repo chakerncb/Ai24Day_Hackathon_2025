@@ -7,7 +7,7 @@ const AddItem = ({ refreshItems }) => {
   const [status, setStatus] = useState('');
   const [deadline, setDeadline] = useState('');
   const [error, setError] = useState(null);
-  const API_URL = "http://localhost:8000/api/tasks";
+  const API_URL = "/api/tasks";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
