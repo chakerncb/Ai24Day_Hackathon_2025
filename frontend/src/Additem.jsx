@@ -56,7 +56,7 @@ const AddItem = ({ refreshItems }) => {
         <div>
           <label htmlFor="deadline">Deadline:</label>
           <input
-            type="date"
+            type="datetime-local"
             id="deadline"
             value={deadline}
             onChange={(e) => setDeadline(e.target.value)}
