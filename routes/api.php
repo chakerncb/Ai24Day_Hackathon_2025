@@ -27,5 +27,8 @@ Route::namespace('App\Http\Controllers')->group(function () {
     Route::post('/register', 'AuthController@register');
     Route::post('/logout', 'AuthController@logout')
         ->middleware('auth:sanctum');
+
+
+//    
     
     });
