@@ -9,6 +9,11 @@ class TasksController extends Controller
 {
     //
 
+    function __construct()
+    {
+        $this->middleware('auth:sanctum');
+    }
+
     public function index()
     {
         $tasks = Task::all();

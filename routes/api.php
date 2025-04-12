@@ -22,5 +22,10 @@ Route::namespace('App\Http\Controllers')->group(function () {
 
    
     Route::apiResource('tasks', 'TasksController');
+
+    Route::post('/login', 'AuthController@login')->name('login');
+    Route::post('/register', 'AuthController@register');
+    Route::post('/logout', 'AuthController@logout')
+        ->middleware('auth:sanctum');
     
     });
