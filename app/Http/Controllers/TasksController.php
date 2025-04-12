@@ -11,10 +11,10 @@ class TasksController extends Controller
 {
     //
 
-    function __construct()
-    {
-        $this->middleware('auth:sanctum');
-    }
+    // function __construct()
+    // {
+    //     $this->middleware('auth:sanctum');
+    // }
 
     public function index()
     {
@@ -45,7 +45,7 @@ class TasksController extends Controller
         $task = Task::create([
             'title' => $request->input('title'),
             'description' => $request->input('description'),
-            'status' => $request->input('status'),
+            'status' => $request->input('status'), 
             'user_id' => $request->input('user_id'),
             'deadline' => $request->input('deadline'),
         ]);

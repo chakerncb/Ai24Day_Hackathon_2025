@@ -7,7 +7,6 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-
 Route::namespace('App\Http\Controllers')->group(function () {
     
     // Route::get('/', 'TasksController@index')->name('tasks.getAll');
@@ -28,7 +27,4 @@ Route::namespace('App\Http\Controllers')->group(function () {
     Route::post('/logout', 'AuthController@logout')
         ->middleware('auth:sanctum');
 
-
-//    
-    
     });
