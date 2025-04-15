@@ -20,7 +20,7 @@ Route::namespace('App\Http\Controllers')->group(function () {
     // Route::delete('/{id}', 'TasksController@destroy')->name('tasks.delete');
 
    
-    Route::apiResource('tasks', 'TasksController');
+    Route::apiResource('coach', 'CoachController');
 
     Route::post('/login', 'AuthController@login')->name('login');
     Route::post('/register', 'AuthController@register');
