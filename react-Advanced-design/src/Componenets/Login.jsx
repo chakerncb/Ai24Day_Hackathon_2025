@@ -7,7 +7,7 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
-const Api_url = "localhost:3500/api/admin/login"
+const Api_url = "localhost:8000/api"
     const handleSubmit = async (e) => {
         e.preventDefault(); // Prevent default form submission behavior
     
