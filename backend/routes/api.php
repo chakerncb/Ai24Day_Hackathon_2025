@@ -21,6 +21,7 @@ Route::namespace('App\Http\Controllers')->group(function () {
 
    
     Route::apiResource('coach', 'CoachController');
+    Route::apiResource('reception', 'ReceptionController');
 
     Route::post('/login', 'AuthController@login')->name('login');
     Route::post('/register', 'AuthController@register');

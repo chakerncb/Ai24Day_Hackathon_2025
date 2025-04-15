@@ -17,7 +17,6 @@ class reception extends Model
         'password',
         'age',
         'gender',
-        'email_address',
-        'id_admin',
-    ];
+        'email_address'
+        ];
 }
