@@ -22,6 +22,17 @@ Route::namespace('App\Http\Controllers')->group(function () {
    
     Route::apiResource('coach', 'CoachController');
     Route::apiResource('reception', 'ReceptionController');
+    Route::apiResource('trainee', 'TraineeController');
+
+
+    $camLogData = [];
+
+    Route::post('camLog', function (Request $request) use (&$camLogData) {
+        $camLogData = $request->all();
+    });
+
+    Route::get('camLog', fn() => response()->json($camLogData));
+    
 
     Route::post('/login', 'AuthController@login')->name('login');
     Route::post('/register', 'AuthController@register');
