@@ -81,15 +81,15 @@ class ReceptionController extends Controller
                 'message' => 'Reception not found',
             ], 404);
         }
-        $request->validate([
-            'full_name' => 'sometimes|string|max:255',
-            'phone_number' => 'sometimes|string|max:15',
-            'password' => 'sometimes|string|min:8',
-            'age' => 'sometimes|integer|min:1',
-            'gender' => 'sometimes|string|in:male,female,other',
-            'email_address' => 'sometimes|email|unique:receptions,email_address,' . $id,
-            'id_admin' => 'sometimes|integer|exists:admins,id',
-        ]);
+        // $request->validate([
+        //     'full_name' => 'sometimes|string|max:255',
+        //     'phone_number' => 'sometimes|string|max:15',
+        //     'password' => 'sometimes|string|min:8',
+        //     'age' => 'sometimes|integer|min:1',
+        //     'gender' => 'sometimes|string|in:male,female,other',
+        //     'email_address' => 'sometimes|email|unique:receptions,email_address,' . $id,
+        //     'id_admin' => 'sometimes|integer|exists:admins,id',
+        // ]);
 
         if ($request->has('password')) {
             $request->merge(['password' => bcrypt($request->password)]);
