@@ -5,38 +5,46 @@ const Coach = () => {
   const [coaches, setCoaches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [currentCoach, setCurrentCoach] = useState(null);
-  const [formData, setFormData] = useState({
-    full_name: '',
-    gender: 'm',
-    age: '',
-    phone_number: '',
-    email_address: ''
-  });
+  const [refreshTrigger, setRefreshTrigger] = useState(false);
 
+  // Form state
+  const [id, setId] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [gender, setGender] = useState('m');
+  const [age, setAge] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [emailAddress, setEmailAddress] = useState('');
+
+  // Fetch coaches data
   useEffect(() => {
     const fetchCoaches = async () => {
       try {
+        setLoading(true);
         const response = await fetch('http://localhost:8000/api/coach');
         if (!response.ok) {
           throw new Error('Failed to fetch coaches');
         }
         const data = await response.json();
         setCoaches(data.coach);
-        setLoading(false);
+        setError(null);
       } catch (err) {
         setError(err.message);
+      } finally {
         setLoading(false);
       }
     };
 
     fetchCoaches();
-  }, []);
+  }, [refreshTrigger]);
 
+  // Delete a coach
   const deleteCoach = async (id) => {
     try {
+      setLoading(true);
       const response = await fetch(`http://localhost:8000/api/coach/${id}`, {
         method: 'DELETE',
       });
@@ -45,76 +53,81 @@ const Coach = () => {
         throw new Error('Failed to delete coach');
       }
 
-      setCoaches((prevCoaches) => prevCoaches.filter(coach => coach.id_coach !== id));
+      setRefreshTrigger(prev => !prev);
+      setSuccessMessage('Coach deleted successfully!');
+      setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
-      console.error(err.message);
-      setError('Failed to delete coach');
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Open update modal with coach data
   const openUpdateModal = (coach) => {
     setCurrentCoach(coach);
-    setFormData({
-      full_name: coach.full_name,
-      gender: coach.gender,
-      age: coach.age,
-      phone_number: coach.phone_number,
-      email_address: coach.email_address
-    });
+    setId(coach.id_coach);
+    setFullName(coach.full_name);
+    setGender(coach.gender);
+    setAge(coach.age);
+    setPhoneNumber(coach.phone_number);
+    setEmailAddress(coach.email_address);
     setIsUpdateModalOpen(true);
+    setError(null);
   };
 
+  // Close update modal
   const closeUpdateModal = () => {
     setIsUpdateModalOpen(false);
     setCurrentCoach(null);
+    setError(null);
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
+  // Update coach
   const updateCoach = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/coach/${currentCoach.id_coach}`, {
+      setLoading(true);
+      const response = await fetch(`http://localhost:8000/api/coach/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          full_name: fullName,
+          gender,
+          age,
+          phone_number: phoneNumber,
+          email_address: emailAddress
+        })
       });
 
       if (!response.ok) {
         throw new Error('Failed to update coach');
       }
 
-      const updatedCoach = await response.json();
-      
-      setCoaches(prevCoaches => 
-        prevCoaches.map(coach => 
-          coach.id_coach === currentCoach.id_coach ? updatedCoach : coach
-        )
-      );
-      
+      setRefreshTrigger(prev => !prev);
+      setSuccessMessage('Coach updated successfully!');
+      setTimeout(() => setSuccessMessage(null), 3000);
       closeUpdateModal();
     } catch (err) {
-      console.error(err.message);
-      setError('Failed to update coach');
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Filter coaches based on search term
   const filteredCoaches = coaches.filter((coach) =>
     coach.full_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Get gender label
   const getGenderLabel = (genderCode) => {
     return genderCode === 'f' ? 'Female' : genderCode === 'm' ? 'Male' : 'Other';
   };
 
-  if (loading) {
+  // Loading state
+  if (loading && coaches.length === 0) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -122,7 +135,8 @@ const Coach = () => {
     );
   }
 
-  if (error) {
+  // Error state
+  if (error && coaches.length === 0) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-red-500 text-lg">{error}</div>
@@ -133,6 +147,20 @@ const Coach = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
+        {/* Success message */}
+        {successMessage && (
+          <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-lg">
+            {successMessage}
+          </div>
+        )}
+
+        {/* Error message */}
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
+            {error}
+          </div>
+        )}
+
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-800">Coaches Management</h1>
@@ -148,6 +176,12 @@ const Coach = () => {
             />
           </div>
         </div>
+
+        {loading && coaches.length > 0 && (
+          <div className="flex justify-center mb-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCoaches.map((coach) => (
@@ -178,7 +212,7 @@ const Coach = () => {
                   </div>
                 </div>
 
-                <div  className="space-y-3">
+                <div className="space-y-3">
                   <div className="flex items-center">
                     <FiPhone className="text-gray-500 mr-3" />
                     <span className="text-gray-700">{coach.phone_number}</span>
@@ -195,6 +229,7 @@ const Coach = () => {
                     <button
                       className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300 flex items-center"
                       onClick={() => openUpdateModal(coach)}
+                      disabled={loading}
                     >
                       <FiEdit2 className="inline mr-2" />
                       Edit
@@ -202,6 +237,7 @@ const Coach = () => {
                     <button
                       className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition duration-300 flex items-center"
                       onClick={() => deleteCoach(coach.id_coach)}
+                      disabled={loading}
                     >
                       <FiTrash2 className="inline mr-2" />
                       Delete
@@ -235,83 +271,103 @@ const Coach = () => {
           <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
             <div className="flex justify-between items-center border-b p-4">
               <h3 className="text-xl font-semibold text-gray-800">Update Coach</h3>
-              <button onClick={closeUpdateModal} className="text-gray-500 hover:text-gray-700">
+              <button 
+                onClick={closeUpdateModal}
+                disabled={loading}
+                className="text-gray-500 hover:text-gray-700 disabled:opacity-50"
+              >
                 <FiX className="text-xl" />
               </button>
             </div>
             <div className="p-6">
+              {error && (
+                <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
+                  {error}
+                </div>
+              )}
+
               <div className="space-y-4">
                 <div>
                   <label className="block text-gray-700 mb-2">Full Name</label>
                   <input
                     type="text"
-                    name="full_name"
-                    value={formData.full_name}
-                    onChange={handleInputChange}
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
                     className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    disabled={loading}
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-gray-700 mb-2">Gender</label>
                   <select
-                    name="gender"
-                    value={formData.gender}
-                    onChange={handleInputChange}
+                    value={gender}
+                    onChange={(e) => setGender(e.target.value)}
                     className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    disabled={loading}
                   >
                     <option value="m">Male</option>
                     <option value="f">Female</option>
                     <option value="o">Other</option>
                   </select>
                 </div>
-                
+
                 <div>
                   <label className="block text-gray-700 mb-2">Age</label>
                   <input
                     type="number"
-                    name="age"
-                    value={formData.age}
-                    onChange={handleInputChange}
+                    value={age}
+                    onChange={(e) => setAge(e.target.value)}
                     className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    disabled={loading}
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-gray-700 mb-2">Phone Number</label>
                   <input
                     type="tel"
-                    name="phone_number"
-                    value={formData.phone_number}
-                    onChange={handleInputChange}
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
                     className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    disabled={loading}
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-gray-700 mb-2">Email Address</label>
                   <input
                     type="email"
-                    name="email_address"
-                    value={formData.email_address}
-                    onChange={handleInputChange}
+                    value={emailAddress}
+                    onChange={(e) => setEmailAddress(e.target.value)}
                     className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    disabled={loading}
                   />
                 </div>
               </div>
-              
+
               <div className="flex justify-end space-x-3 mt-6">
                 <button
                   onClick={closeUpdateModal}
-                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition duration-300"
+                  disabled={loading}
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition duration-300 disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={updateCoach}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
+                  disabled={loading}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 disabled:opacity-50 flex items-center justify-center"
                 >
-                  Update Coach
+                  {loading ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Updating...
+                    </>
+                  ) : 'Update Coach'}
                 </button>
               </div>
             </div>

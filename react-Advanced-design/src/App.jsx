@@ -9,6 +9,7 @@ import Reception from "./Componenets/Reception/Reception";
 import Trainers from "./Componenets/trainers/Trainers";
 import Users from "./Componenets/Users/Users";
 import Caoch from "./Componenets/Caoch/Caoch";
+import UpdateReception from "./Componenets/Reception/UpdateReception";
 function App() {
 
 
@@ -37,6 +38,7 @@ function App() {
         <Route path="/Trainers" element={<Trainers />} />
         <Route path="/Users" element={<Users />} />
         <Route path="/Caoch" element={<Caoch />} />
+        <Route path="/Update-reception/:id" element={<UpdateReception />} />
       </Routes>
     </>
   );
