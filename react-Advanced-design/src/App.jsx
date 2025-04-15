@@ -8,7 +8,7 @@ import Admin from "./Componenets/Admin/Admin";
 import Reception from "./Componenets/Reception/Reception";
 import Trainers from "./Componenets/trainers/Trainers";
 import Users from "./Componenets/Users/Users";
-
+import Caoch from "./Componenets/Caoch/Caoch";
 function App() {
 
 
@@ -36,6 +36,7 @@ function App() {
         <Route path="/Reception" element={<Reception />} />
         <Route path="/Trainers" element={<Trainers />} />
         <Route path="/Users" element={<Users />} />
+        <Route path="/Caoch" element={<Caoch />} />
       </Routes>
     </>
   );

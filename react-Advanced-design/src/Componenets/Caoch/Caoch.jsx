@@ -1,18 +1,13 @@
 import { useState, useEffect } from 'react';
-import {
-  FiUser, FiPhone, FiMail, FiCalendar,
-  FiTrash2, FiEdit2, FiX
-} from 'react-icons/fi';
+import { FiUser, FiPhone, FiMail, FiCalendar, FiTrash2, FiEdit2, FiX } from 'react-icons/fi';
 
-const Reception = () => {
-  const [receptions, setReceptions] = useState([]);
+const Coach = () => {
+  const [coaches, setCoaches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [currentReception, setCurrentReception] = useState(null);
-  const [updating, setUpdating] = useState(false);
-
+  const [currentCoach, setCurrentCoach] = useState(null);
   const [formData, setFormData] = useState({
     full_name: '',
     gender: 'm',
@@ -22,59 +17,56 @@ const Reception = () => {
   });
 
   useEffect(() => {
-    const fetchReceptions = async () => {
+    const fetchCoaches = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/reception');
-        if (!response.ok) throw new Error('Failed to fetch reception staff');
+        const response = await fetch('http://localhost:8000/api/coach');
+        if (!response.ok) {
+          throw new Error('Failed to fetch coaches');
+        }
         const data = await response.json();
-        setReceptions(data.reception);
+        setCoaches(data.coach);
+        setLoading(false);
       } catch (err) {
         setError(err.message);
-      } finally {
         setLoading(false);
       }
     };
 
-    fetchReceptions();
+    fetchCoaches();
   }, []);
 
-  const deleteReception = async (id) => {
+  const deleteCoach = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/reception/${id}`, {
+      const response = await fetch(`http://localhost:8000/api/coach/${id}`, {
         method: 'DELETE',
       });
 
-      if (!response.ok) throw new Error('Failed to delete reception staff');
+      if (!response.ok) {
+        throw new Error('Failed to delete coach');
+      }
 
-      setReceptions(prev => prev.filter(r => r.id_reception !== id));
+      setCoaches((prevCoaches) => prevCoaches.filter(coach => coach.id_coach !== id));
     } catch (err) {
       console.error(err.message);
-      setError('Failed to delete reception staff');
+      setError('Failed to delete coach');
     }
   };
 
-  const openUpdateModal = (reception) => {
-    setCurrentReception(reception);
+  const openUpdateModal = (coach) => {
+    setCurrentCoach(coach);
     setFormData({
-      full_name: reception.full_name,
-      gender: reception.gender,
-      age: reception.age,
-      phone_number: reception.phone_number,
-      email_address: reception.email_address
+      full_name: coach.full_name,
+      gender: coach.gender,
+      age: coach.age,
+      phone_number: coach.phone_number,
+      email_address: coach.email_address
     });
     setIsUpdateModalOpen(true);
   };
 
   const closeUpdateModal = () => {
     setIsUpdateModalOpen(false);
-    setCurrentReception(null);
-    setFormData({
-      full_name: '',
-      gender: 'm',
-      age: '',
-      phone_number: '',
-      email_address: ''
-    });
+    setCurrentCoach(null);
   };
 
   const handleInputChange = (e) => {
@@ -85,41 +77,42 @@ const Reception = () => {
     }));
   };
 
-  const updateReception = async () => {
-    if (!currentReception) return;
-    setUpdating(true);
-  
+  const updateCoach = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/reception/${currentReception.id_reception}`, {
+      const response = await fetch(`http://localhost:8000/api/coach/${currentCoach.id_coach}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData)
       });
-  
-      if (!response.ok) throw new Error('Failed to update reception staff');
-  
-      // Optional: you can still log the response
-      const updatedReception = await response.json();
-      console.log('Updated:', updatedReception);
-  
+
+      if (!response.ok) {
+        throw new Error('Failed to update coach');
+      }
+
+      const updatedCoach = await response.json();
+      
+      setCoaches(prevCoaches => 
+        prevCoaches.map(coach => 
+          coach.id_coach === currentCoach.id_coach ? updatedCoach : coach
+        )
+      );
+      
       closeUpdateModal();
     } catch (err) {
       console.error(err.message);
-      setError('Failed to update reception staff');
-    } finally {
-      setUpdating(false);
+      setError('Failed to update coach');
     }
   };
-  
 
-  const filteredReceptions = receptions.filter(r =>
-    r.full_name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredCoaches = coaches.filter((coach) =>
+    coach.full_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const getGenderLabel = (genderCode) =>
-    genderCode === 'f' ? 'Female' : genderCode === 'm' ? 'Male' : 'Other';
+  const getGenderLabel = (genderCode) => {
+    return genderCode === 'f' ? 'Female' : genderCode === 'm' ? 'Male' : 'Other';
+  };
 
   if (loading) {
     return (
@@ -142,13 +135,13 @@ const Reception = () => {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800">Reception Staff Management</h1>
-            <p className="text-gray-600 mt-2">View and manage all reception staff</p>
+            <h1 className="text-3xl font-bold text-gray-800">Coaches Management</h1>
+            <p className="text-gray-600 mt-2">View and manage all coaching staff</p>
           </div>
           <div className="relative w-full md:w-64 mt-4 md:mt-0">
             <input
               type="text"
-              placeholder="Search reception staff..."
+              placeholder="Search coaches..."
               className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -157,18 +150,18 @@ const Reception = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredReceptions.map((reception) => (
+          {filteredCoaches.map((coach) => (
             <div
-              key={reception.id_reception}
+              key={coach.id_coach}
               className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
             >
               <div className="p-6">
                 <div className="flex items-center mb-4">
                   <div
                     className={`p-3 rounded-full mr-4 ${
-                      reception.gender === 'f'
+                      coach.gender === 'f'
                         ? 'bg-pink-100 text-pink-600'
-                        : reception.gender === 'm'
+                        : coach.gender === 'm'
                         ? 'bg-blue-100 text-blue-600'
                         : 'bg-purple-100 text-purple-600'
                     }`}
@@ -177,38 +170,38 @@ const Reception = () => {
                   </div>
                   <div>
                     <h2 className="text-xl font-semibold text-gray-800">
-                      {reception.full_name}
+                      {coach.full_name}
                     </h2>
                     <p className="text-gray-600">
-                      {reception.age} years • {getGenderLabel(reception.gender)}
+                      {coach.age} years • {getGenderLabel(coach.gender)}
                     </p>
                   </div>
                 </div>
 
-                <div className="space-y-3">
+                <div  className="space-y-3">
                   <div className="flex items-center">
                     <FiPhone className="text-gray-500 mr-3" />
-                    <span className="text-gray-700">{reception.phone_number}</span>
+                    <span className="text-gray-700">{coach.phone_number}</span>
                   </div>
                   <div className="flex items-center">
                     <FiMail className="text-gray-500 mr-3" />
-                    <span className="text-gray-700">{reception.email_address}</span>
+                    <span className="text-gray-700">{coach.email_address}</span>
                   </div>
                   <div className="flex items-center">
                     <FiCalendar className="text-gray-500 mr-3" />
-                    <span className="text-gray-700">Reception ID: {reception.id_reception}</span>
+                    <span className="text-gray-700">Coach ID: {coach.id_coach}</span>
                   </div>
                   <div className="flex space-x-2 mt-4">
                     <button
                       className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300 flex items-center"
-                      onClick={() => openUpdateModal(reception)}
+                      onClick={() => openUpdateModal(coach)}
                     >
                       <FiEdit2 className="inline mr-2" />
                       Edit
                     </button>
                     <button
                       className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition duration-300 flex items-center"
-                      onClick={() => deleteReception(reception.id_reception)}
+                      onClick={() => deleteCoach(coach.id_coach)}
                     >
                       <FiTrash2 className="inline mr-2" />
                       Delete
@@ -220,46 +213,45 @@ const Reception = () => {
           ))}
         </div>
 
-        {filteredReceptions.length === 0 && (
+        {filteredCoaches.length === 0 && (
           <div className="text-center py-12">
             <h3 className="text-lg font-medium text-gray-700">
-              {receptions.length === 0
-                ? 'No reception staff available'
-                : 'No matching reception staff found'}
+              {coaches.length === 0
+                ? 'No coaches available'
+                : 'No matching coaches found'}
             </h3>
             <p className="text-gray-500 mt-2">
-              {receptions.length === 0
-                ? 'Add new reception staff to get started'
+              {coaches.length === 0
+                ? 'Add new coaches to get started'
                 : 'Try a different search term'}
             </p>
           </div>
         )}
       </div>
 
-      {/* Update Modal */}
+      {/* Update Coach Modal */}
       {isUpdateModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
             <div className="flex justify-between items-center border-b p-4">
-              <h3 className="text-xl font-semibold text-gray-800">Update Reception Staff</h3>
+              <h3 className="text-xl font-semibold text-gray-800">Update Coach</h3>
               <button onClick={closeUpdateModal} className="text-gray-500 hover:text-gray-700">
                 <FiX className="text-xl" />
               </button>
             </div>
             <div className="p-6">
               <div className="space-y-4">
-                {['full_name', 'age', 'phone_number', 'email_address'].map((field) => (
-                  <div key={field}>
-                    <label className="block text-gray-700 mb-2 capitalize">{field.replace('_', ' ')}</label>
-                    <input
-                      type={field === 'age' ? 'number' : field === 'email_address' ? 'email' : 'text'}
-                      name={field}
-                      value={formData[field]}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                ))}
+                <div>
+                  <label className="block text-gray-700 mb-2">Full Name</label>
+                  <input
+                    type="text"
+                    name="full_name"
+                    value={formData.full_name}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                
                 <div>
                   <label className="block text-gray-700 mb-2">Gender</label>
                   <select
@@ -273,7 +265,41 @@ const Reception = () => {
                     <option value="o">Other</option>
                   </select>
                 </div>
+                
+                <div>
+                  <label className="block text-gray-700 mb-2">Age</label>
+                  <input
+                    type="number"
+                    name="age"
+                    value={formData.age}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-gray-700 mb-2">Phone Number</label>
+                  <input
+                    type="tel"
+                    name="phone_number"
+                    value={formData.phone_number}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-gray-700 mb-2">Email Address</label>
+                  <input
+                    type="email"
+                    name="email_address"
+                    value={formData.email_address}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
               </div>
+              
               <div className="flex justify-end space-x-3 mt-6">
                 <button
                   onClick={closeUpdateModal}
@@ -282,13 +308,10 @@ const Reception = () => {
                   Cancel
                 </button>
                 <button
-                  onClick={updateReception}
-                  disabled={updating}
-                  className={`px-4 py-2 text-white rounded-lg transition duration-300 ${
-                    updating ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
-                  }`}
+                  onClick={updateCoach}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
                 >
-                  {updating ? 'Updating...' : 'Update Staff'}
+                  Update Coach
                 </button>
               </div>
             </div>
@@ -299,4 +322,4 @@ const Reception = () => {
   );
 };
 
-export default Reception;
+export default Coach;

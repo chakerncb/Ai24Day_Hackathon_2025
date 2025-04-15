@@ -22,26 +22,20 @@ const Admin = () => {
             <span className="ml-3">Users</span>
           </Link>
           <Link
-            to="/reception"
+            to="/Reception"
             className="flex items-center px-4 py-3 hover:bg-gray-700"
           >
             <span className="w-6 text-center">R</span>
             <span className="ml-3">Reception</span>
           </Link>
           <Link
-            to="/coach"
+            to="/Coach"
             className="flex items-center px-4 py-3 hover:bg-gray-700"
           >
             <span className="w-6 text-center">C</span>
             <span className="ml-3">Coach</span>
           </Link>
-          <Link
-            to="/settings"
-            className="flex items-center px-4 py-3 hover:bg-gray-700"
-          >
-            <span className="w-6 text-center">S</span>
-            <span className="ml-3">Settings</span>
-          </Link>
+          
         </nav>
       </div>
 

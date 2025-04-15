@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Cross-Origin Resource Sharing (CORS) Configuration
@@ -15,11 +14,11 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie' , '/tasks/*'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
-    'allowed_methods' => ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE'],
+    'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:3000'],
+    'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => [],
 
@@ -30,5 +29,4 @@ return [
     'max_age' => 0,
 
     'supports_credentials' => false,
-
 ];
