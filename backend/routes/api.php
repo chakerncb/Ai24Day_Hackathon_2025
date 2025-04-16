@@ -26,12 +26,22 @@ Route::namespace('App\Http\Controllers')->group(function () {
 
 
 
-    Route::post('camLog', 'LogsController@index');
+    Route::post('/UsersLog', 'LogsController@index');
     
 
     Route::post('/login', 'AuthController@login')->name('login');
     Route::post('/register', 'AuthController@register');
     Route::post('/logout', 'AuthController@logout')
         ->middleware('auth:sanctum');
+
+
+
+        // Route::group(['prefix' => 'trainees'], function () {
+        //     Route::get('/logs', 'TrainingController@getRecognitionLogs');
+        //     Route::get('/sessions', 'TrainingController@getTraineeSessions');
+        //     Route::post('/entry', 'TrainingController@processTrainingEntry');
+        //     Route::post('/add-sessions', 'TrainingController@addSessions');
+        //     Route::get('/{user_id}', 'TrainingController@getTrainee');
+        // });
 
     });
