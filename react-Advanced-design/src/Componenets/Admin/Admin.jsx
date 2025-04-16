@@ -15,7 +15,7 @@ const Admin = () => {
         <nav className="mt-6">
           
           <Link
-            to="/Users"
+            to="/Trainers"
             className="flex items-center px-4 py-3 hover:bg-gray-700"
           >
             <span className="w-6 text-center">U</span>
@@ -29,7 +29,7 @@ const Admin = () => {
             <span className="ml-3">Reception</span>
           </Link>
           <Link
-            to="/Coach"
+            to="/Caoch"
             className="flex items-center px-4 py-3 hover:bg-gray-700"
           >
             <span className="w-6 text-center">C</span>
