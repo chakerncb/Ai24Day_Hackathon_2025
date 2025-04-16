@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext'; // Assuming you have the auth context
 import { toast } from 'react-toastify';
 import { FiRefreshCw, FiClock, FiUser, FiActivity } from 'react-icons/fi';
 
-const Users_log = () => {
-  const { user } = useAuth();
+const UsersLog = () => {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,32 +11,21 @@ const Users_log = () => {
   const fetchUserLogs = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/user-logs'); // Your API endpoint
+      const response = await axios.get('http://localhost:8000/api/userslog'); // Replace with your API endpoint
       setLogs(response.data);
       setError(null);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to fetch user logs');
-      toast.error(err.response?.data?.message || 'Failed to fetch user logs');
+      const errorMessage = err.response?.data?.message || 'Failed to fetch user logs';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    // Only fetch if admin (chaker@gmail.com)
-    if (user?.email === 'chaker@gmail.com') {
-      fetchUserLogs();
-    }
-  }, [user]);
-
-  if (user?.email !== 'chaker@gmail.com') {
-    return (
-      <div className="p-6 text-center text-red-500">
-        <h2>Access Denied</h2>
-        <p>Only admin users can view this page</p>
-      </div>
-    );
-  }
+    fetchUserLogs();
+  }, []);
 
   if (loading) {
     return (
@@ -52,7 +39,7 @@ const Users_log = () => {
     return (
       <div className="p-6 text-center text-red-500">
         <p>{error}</p>
-        <button 
+        <button
           onClick={fetchUserLogs}
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
@@ -98,7 +85,10 @@ const Users_log = () => {
           <tbody className="bg-white divide-y divide-gray-200">
             {logs.length > 0 ? (
               logs.map((log, index) => (
-                <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                <tr
+                  key={index}
+                  className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
+                >
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {log.username}
                   </td>
@@ -106,13 +96,15 @@ const Users_log = () => {
                     {new Date(log.timestamp).toLocaleString()}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500">
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      log.action.includes('login') 
-                        ? 'bg-green-100 text-green-800' 
-                        : log.action.includes('delete') 
-                          ? 'bg-red-100 text-red-800' 
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs ${
+                        log.action.includes('login')
+                          ? 'bg-green-100 text-green-800'
+                          : log.action.includes('delete')
+                          ? 'bg-red-100 text-red-800'
                           : 'bg-blue-100 text-blue-800'
-                    }`}>
+                      }`}
+                    >
                       {log.action}
                     </span>
                   </td>
@@ -132,4 +124,4 @@ const Users_log = () => {
   );
 };
 
-export default Users_log;
+export default UsersLog;

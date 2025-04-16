@@ -35,6 +35,13 @@ const Admin = () => {
             <span className="w-6 text-center">C</span>
             <span className="ml-3">Coach</span>
           </Link>
+          <Link
+            to="/Users-log"
+            className="flex items-center px-4 py-3 hover:bg-gray-700"
+          >
+            <span className="w-6 text-center">L</span>
+            <span className="ml-3">Logs</span>
+          </Link>
           
         </nav>
       </div>
