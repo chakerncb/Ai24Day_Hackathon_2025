@@ -22,7 +22,7 @@ class LogsController extends Controller
             ], 404);
         }
 
-        return response()->json([ $logs ])->setStatusCode(200, 'Logs found');
+        return response()->json( $logs )->setStatusCode(200, 'Logs found');
           
     }
 

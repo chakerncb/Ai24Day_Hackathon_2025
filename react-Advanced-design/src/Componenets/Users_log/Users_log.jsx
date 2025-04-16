@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { FiRefreshCw, FiClock, FiUser, FiActivity } from 'react-icons/fi';
+import { FiRefreshCw, FiCalendar, FiTag, FiMapPin } from 'react-icons/fi';
 
 const UsersLog = () => {
   const [logs, setLogs] = useState([]);
@@ -14,6 +14,7 @@ const UsersLog = () => {
       const response = await axios.get('http://localhost:8000/api/userslog'); // Replace with your API endpoint
       setLogs(response.data);
       setError(null);
+      
     } catch (err) {
       const errorMessage = err.response?.data?.message || 'Failed to fetch user logs';
       setError(errorMessage);
@@ -52,7 +53,7 @@ const UsersLog = () => {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">User Activity Logs</h2>
+        <h2 className="text-2xl font-bold">User Logs</h2>
         <button
           onClick={fetchUserLogs}
           className="flex items-center px-4 py-2 bg-gray-100 rounded hover:bg-gray-200"
@@ -67,17 +68,22 @@ const UsersLog = () => {
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 <div className="flex items-center">
-                  <FiUser className="mr-2" /> Username
+                  <FiTag className="mr-2" /> ID
                 </div>
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 <div className="flex items-center">
-                  <FiClock className="mr-2" /> Time
+                  <FiCalendar className="mr-2" /> Name
                 </div>
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 <div className="flex items-center">
-                  <FiActivity className="mr-2" /> Action
+                  <FiMapPin className="mr-2" /> Place
+                </div>
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <div className="flex items-center">
+                  <FiCalendar className="mr-2" /> Timestamp
                 </div>
               </th>
             </tr>
@@ -90,30 +96,23 @@ const UsersLog = () => {
                   className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
                 >
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {log.username}
+                    {log.id}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(log.timestamp).toLocaleString()}
+                    {log.name}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {log.place}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs ${
-                        log.action.includes('login')
-                          ? 'bg-green-100 text-green-800'
-                          : log.action.includes('delete')
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-blue-100 text-blue-800'
-                      }`}
-                    >
-                      {log.action}
-                    </span>
+                    {new Date(log.timestamp).toLocaleString()}
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="3" className="px-6 py-4 text-center text-sm text-gray-500">
-                  No activity logs found
+                <td colSpan="4" className="px-6 py-4 text-center text-sm text-gray-500">
+                  No logs found
                 </td>
               </tr>
             )}
