@@ -26,7 +26,7 @@ Route::namespace('App\Http\Controllers')->group(function () {
 
 
 
-    Route::post('/userslog', 'LogsController@index');
+    Route::get('/userslog', 'LogsController@index');
     
 
     Route::post('/login', 'AuthController@login')->name('login');
