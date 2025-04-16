@@ -7,9 +7,10 @@ import "react-toastify/dist/ReactToastify.css";
 import Admin from "./Componenets/Admin/Admin";
 import Reception from "./Componenets/Reception/Reception";
 import Trainers from "./Componenets/trainers/Trainers";
-import Users from "./Componenets/Users/Users";
+
 import Caoch from "./Componenets/Caoch/Caoch";
 import UpdateReception from "./Componenets/Reception/UpdateReception";
+import Users_log from "./Componenets/Users_log/Users_log";
 function App() {
 
 
@@ -33,12 +34,11 @@ function App() {
         <Route path="*" element={<Home />} />
         <Route path="/" element={<Home />} />
         <Route path="/Admin" element={<Admin />} />
-        
         <Route path="/Reception" element={<Reception />} />
         <Route path="/Trainers" element={<Trainers />} />
-        <Route path="/Users" element={<Users />} />
         <Route path="/Caoch" element={<Caoch />} />
         <Route path="/Update-reception/:id" element={<UpdateReception />} />
+        <Route path="/Users-log" element={<Users_log />} />
       </Routes>
     </>
   );
